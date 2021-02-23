@@ -15,11 +15,11 @@ int main(int argc, char* argv[]) {
     json input = { {"message","hello"} };
     uint64_t task_id = q.Push(input);
 
-    std::cerr << "task: " << task_id << " has been created.\n";
+    std::cerr << "task: " << task_id << " has been created: " << input << "\n";
   };
 
-  auto on_result_receive = [](int64_t task_id, const json& output, caravan::Queue& q) {
-    std::cerr << "task: " << task_id << " has finished : " << output << "\n";
+  auto on_result_receive = [](int64_t task_id, const json& input, const json& output, caravan::Queue& q) {
+    std::cerr << "task: " << task_id << " has finished, input: " << input << ", output: " << output << "\n";
   };
 
   std::function<json(const json& input)> do_task = [](const json& input) {
