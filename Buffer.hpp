@@ -171,8 +171,10 @@ namespace caravan_impl {
       MPI_Recv(&buf[0], buf.size(), MPI_CHAR, parent, st.MPI_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       const json j = json::from_msgpack(buf);
       logger.d("%s", j.dump().c_str());
-      int64_t task_id = j.at(0).get<int64_t>();
-      for (const json &j_t: j) { tasks.push( std::make_pair(task_id, j.at(1)) ); }
+      for (const json &j_t: j) {
+        int64_t task_id = j_t.at(0).get<int64_t>();
+        tasks.push( std::make_pair(task_id, j_t.at(1)) );
+      }
     }
 
     long ReceiveResult(const MPI_Status &st) {

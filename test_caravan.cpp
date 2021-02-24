@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
 
   std::function<json(const json& input)> do_task = [](const json& input) {
     // do some job
+    std::cerr << "doing tasks: " << input << "\n";
     json output;
     output["result"] = input["message"].get<std::string>() + " world";
     return output;
