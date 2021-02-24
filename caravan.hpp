@@ -53,7 +53,7 @@ namespace caravan {
               const std::function<void(int64_t, const json&, const json&, Queue&)>& on_result_receive,
               const std::function<json(const json&)>& do_task,
               MPI_Comm comm = MPI_COMM_WORLD,
-              int num_proc_per_buf = 384) {
+              int num_proc_per_buf = 384, int log_level = 0) {
     int rank, procs;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &procs);
@@ -66,7 +66,7 @@ namespace caravan {
     MPI_Bcast((void *) &start, sizeof(std::chrono::system_clock::time_point), MPI_CHAR, 0, MPI_COMM_WORLD);
 
     auto role = caravan_impl::GetRole(rank, procs, num_proc_per_buf);
-    Logger logger(start, 2);
+    Logger logger(start, log_level);
 
     if (std::get<0>(role) == 0) {  // Producer
       ::caravan_impl::Producer prod(logger);
