@@ -5,6 +5,7 @@
 #ifndef CARAVAN_LIB_BASE_HPP
 #define CARAVAN_LIB_BASE_HPP
 
+#include <utility>
 #include <nlohmann/json.hpp>
 #include <icecream.hpp>
 
