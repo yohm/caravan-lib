@@ -46,9 +46,11 @@ namespace caravan_impl {
     Producer(Logger &_logger) : logger(_logger) {};
     Queue tasks;
     Logger &logger;
+    std::map<int, long > elapse_times;  // {rank_id, elapse_time_sum }
 
     void Run(const std::vector<int> &buffers, const std::function<void(int64_t, const json&, const json&, Queue&)>& callback) {
       logger.d("Producer started : ", buffers.size());
+
       std::set<int64_t> running_task_ids;
       std::map<int, size_t> requesting_buffers;
 
@@ -90,6 +92,8 @@ namespace caravan_impl {
             int64_t task_id = result.task_id;
             logger.d("Producer received result for %d", task_id);
             running_task_ids.erase(task_id);
+            if (elapse_times.find(result.rank) == elapse_times.end() ) { elapse_times[result.rank] = 0; }
+            elapse_times[result.rank] += (result.finish_at - result.start_at);
             callback(task_id, result.input, result.output, tasks);
           } else {  // must not happen
             assert(false);

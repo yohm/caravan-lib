@@ -45,6 +45,17 @@ namespace caravan {
       }
       return std::make_tuple(role, parent, children);
     }
+
+    // return the numbers of [producers,buffers,consumers] procs
+    std::array<size_t,3> NumProcs(int procs, int num_proc_per_buf) {
+      std::array<size_t,3> ans = {0ul,0ul,0ul};
+      for (int i = 0; i < procs; i++) {
+        auto tup = GetRole(i, procs, num_proc_per_buf);
+        int role = std::get<0>(tup);
+        ans[role]++;
+      }
+      return ans;
+    }
   }
 
   using json = nlohmann::json;
@@ -53,7 +64,7 @@ namespace caravan {
               const std::function<void(int64_t, const json&, const json&, Queue&)>& on_result_receive,
               const std::function<json(const json&)>& do_task,
               MPI_Comm comm = MPI_COMM_WORLD,
-              int num_proc_per_buf = 384, int log_level = 0) {
+              int num_proc_per_buf = 384, int log_level = 1) {
     int rank, procs;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &procs);
@@ -72,6 +83,21 @@ namespace caravan {
       ::caravan_impl::Producer prod(logger);
       on_init(prod.tasks);
       prod.Run(std::get<2>(role), on_result_receive);
+
+      // print filling rates
+      std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+      long total_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+      size_t num_consumer = caravan_impl::NumProcs(procs, num_proc_per_buf).at(2);
+      IC(prod.elapse_times);
+      long sum_elapse = 0l;
+      for(auto rank_elapse: prod.elapse_times) {
+        int rank = rank_elapse.first;
+        double filling_rate = 100.0 * static_cast<double>(rank_elapse.second) / total_duration;
+        logger.i("filling rate for rank %d : %.1f %", rank, filling_rate);
+        sum_elapse += rank_elapse.second;
+      }
+      double total_filling_rate = 100.0 * static_cast<double>(sum_elapse) / (total_duration * num_consumer);
+      logger.i("total filling rate for %d consumers : %.1f %", num_consumer, total_filling_rate);
     }
     else if (std::get<0>(role) == 1) {  // Buffer
       ::caravan_impl::Buffer buf(std::get<1>(role), logger);
