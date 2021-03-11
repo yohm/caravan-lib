@@ -23,7 +23,9 @@ namespace caravan_impl {
     const int parent;
     Logger &logger;
 
-    void Run(int my_rank, std::chrono::system_clock::time_point ref_time, const std::function<json(const json&)>& do_task) {
+    void Run(const std::function<json(const json&)>& do_task) {
+      std::chrono::system_clock::time_point ref_time = logger.BaseTime();
+      int my_rank = logger.MPIRank();
       while (true) {
         SendRequest();
 

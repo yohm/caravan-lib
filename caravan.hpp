@@ -79,7 +79,7 @@ namespace caravan {
     }
     else if (std::get<0>(role) == 2) {  // Consumer
       ::caravan_impl::Consumer cons(std::get<1>(role), logger);
-      cons.Run(rank, start, do_task);
+      cons.Run(do_task);
     }
   }
 }
