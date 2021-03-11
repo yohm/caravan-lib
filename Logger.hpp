@@ -22,30 +22,30 @@ void debug_printf(const char *, Args const &...) {
 
 class Logger {
  public:
-  Logger(std::chrono::system_clock::time_point _base, int _log_level = 2) : base(_base), log_level(_log_level) {
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  };
+  Logger(std::chrono::system_clock::time_point _base, int _rank, int _log_level = 2) : base(_base), rank(_rank), log_level(_log_level) {};
   template<typename... Args>
   void d(const char *format, Args const &... args) {
     if (log_level >= 2) {
-      std::string header = "[%f @ %d][D] :";
+      std::string header = "[%.2f @ %d][D] :";
       Out(header, format, args...);
     }
   }
   template<typename... Args>
   void i(const char *format, Args const &... args) {
     if (log_level >= 1) {
-      std::string header = "[%f @ %d][I] :";
+      std::string header = "[%.2f @ %d][I] :";
       Out(header, format, args...);
     }
   }
   template<typename... Args>
   void e(const char *format, Args const &... args) {
     if (log_level >= 0) {
-      std::string header = "[%f @ %d][E] :";
+      std::string header = "[%.2f @ %d][E] :";
       Out(header, format, args...);
     }
   }
+  std::chrono::system_clock::time_point BaseTime() const { return base; }
+  int MPIRank() const { return rank; }
  private:
   const std::chrono::system_clock::time_point base;
   int rank;
