@@ -8,10 +8,8 @@
 #include <functional>
 #include <unistd.h>
 #include <mpi.h>
-#include <nlohmann/json.hpp>
-#include <icecream.hpp>
-#include "Logger.hpp"
 #include "Base.hpp"
+#include "Logger.hpp"
 #include "Producer.hpp"
 #include "Buffer.hpp"
 #include "Consumer.hpp"
@@ -77,7 +75,7 @@ namespace caravan {
     MPI_Bcast((void *) &start, sizeof(std::chrono::system_clock::time_point), MPI_CHAR, 0, MPI_COMM_WORLD);
 
     auto role = caravan_impl::GetRole(rank, procs, num_proc_per_buf);
-    Logger logger(start, rank, log_level);
+    ::caravan_impl::Logger logger(start, rank, log_level);
 
     if (std::get<0>(role) == 0) {  // Producer
       ::caravan_impl::Producer prod(logger);

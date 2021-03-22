@@ -12,7 +12,6 @@
 #include <array>
 #include <string>
 #include <sstream>
-#include <nlohmann/json.hpp>
 #include "Base.hpp"
 
 namespace caravan_impl {

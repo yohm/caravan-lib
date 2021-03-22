@@ -10,7 +10,7 @@ With CARAVAN-lib, you can distribute tasks to multiple processes and executes th
 ```cpp
   // define a pre-process: create json object that contains parameters of tasks
   // This function is called only at the master process.
-  auto on_init = [](caravan::Queue& q) {
+  std::function<void(caravan::Queue&)> on_init = [](caravan::Queue& q) {
     json input = { {"message","hello"} };
     uint64_t task_id = q.Push(input);
     std::cerr << "task: " << task_id << " has been created: " << input << "\n";
@@ -18,7 +18,7 @@ With CARAVAN-lib, you can distribute tasks to multiple processes and executes th
 
   // After the task was executed at a worker process, its result is returned to the master process.
   // When the master process receives the result, this callback function is called at the master process.
-  auto on_result_receive = [](int64_t task_id, const json& input, const json& output, caravan::Queue& q) {
+  std::function<void(int64_t, const json&, const json&, caravan::Queue&)> on_result_receive = [](int64_t task_id, const json& input, const json& output, caravan::Queue& q) {
     std::cerr << "task: " << task_id << " has finished: input: " << input << ", output: " << output << "\n";
   };
 

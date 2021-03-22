@@ -10,7 +10,7 @@
 #include <map>
 #include <set>
 #include <chrono>
-#include "mpi.h"
+#include <mpi.h>
 #include "Base.hpp"
 #include "TaskResult.hpp"
 #include "Logger.hpp"

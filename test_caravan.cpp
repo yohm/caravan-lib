@@ -1,6 +1,5 @@
 #include <iostream>
 #include <mpi.h>
-#include <nlohmann/json.hpp>
 #include "caravan.hpp"
 
 
@@ -10,7 +9,7 @@ int main(int argc, char* argv[]) {
 
   MPI_Init(&argc, &argv);
 
-  auto on_init = [](caravan::Queue& q) {
+  std::function<void(caravan::Queue&)> on_init = [](caravan::Queue& q) {
     // pre-process: create json_object that contains parameters of Tasks
     for (int i = 0; i < 3; i++) {
       json input = { {"message","hello"}, {"param", i} };
@@ -19,7 +18,7 @@ int main(int argc, char* argv[]) {
     }
   };
 
-  auto on_result_receive = [](int64_t task_id, const json& input, const json& output, caravan::Queue& q) {
+  std::function<void(int64_t, const json&, const json&, caravan::Queue&)> on_result_receive = [](int64_t task_id, const json& input, const json& output, caravan::Queue& q) {
     std::cerr << "task: " << task_id << " has finished, input: " << input << ", output: " << output << "\n";
 
     if (input["message"].get<std::string>() == "hello") {

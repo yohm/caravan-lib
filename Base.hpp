@@ -6,8 +6,8 @@
 #define CARAVAN_LIB_BASE_HPP
 
 #include <utility>
-#include <nlohmann/json.hpp>
-#include <icecream.hpp>
+#include "json/single_include/nlohmann/json.hpp"
+#include "icecream/icecream.hpp"
 
 namespace caravan {
   using json = nlohmann::json;

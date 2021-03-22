@@ -8,21 +8,26 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include "mpi.h"
+#include <mpi.h>
+
+namespace caravan_impl {
 
 template<typename... Args>
 #ifndef NDEBUG
 void debug_printf(const char *format, Args const &... args) {
   fprintf(stderr, format, args...);
 }
+
 #else
 void debug_printf(const char *, Args const &...) {
 }
 #endif
 
 class Logger {
- public:
-  Logger(std::chrono::system_clock::time_point _base, int _rank, int _log_level = 2) : base(_base), rank(_rank), log_level(_log_level) {};
+  public:
+  Logger(std::chrono::system_clock::time_point _base, int _rank, int _log_level = 2) : base(_base), rank(_rank),
+                                                                                       log_level(_log_level) {};
+
   template<typename... Args>
   void d(const char *format, Args const &... args) {
     if (log_level >= 2) {
@@ -30,6 +35,7 @@ class Logger {
       Out(header, format, args...);
     }
   }
+
   template<typename... Args>
   void i(const char *format, Args const &... args) {
     if (log_level >= 1) {
@@ -37,6 +43,7 @@ class Logger {
       Out(header, format, args...);
     }
   }
+
   template<typename... Args>
   void e(const char *format, Args const &... args) {
     if (log_level >= 0) {
@@ -44,12 +51,16 @@ class Logger {
       Out(header, format, args...);
     }
   }
+
   std::chrono::system_clock::time_point BaseTime() const { return base; }
+
   int MPIRank() const { return rank; }
- private:
+
+  private:
   const std::chrono::system_clock::time_point base;
   int rank;
   int log_level;
+
   template<typename... Args>
   void Out(const std::string &header, const char *format, Args const &... args) {
     auto end = std::chrono::system_clock::now();
@@ -58,4 +69,5 @@ class Logger {
   }
 };
 
+}
 #endif //CARAVAN_SCHEDULER_LOGGER_HPP

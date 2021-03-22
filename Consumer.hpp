@@ -9,7 +9,8 @@
 #include <vector>
 #include <string>
 #include <chrono>
-#include "mpi.h"
+#include <mpi.h>
+#include "Base.hpp"
 #include "Logger.hpp"
 #include "TaskResult.hpp"
 #include "Producer.hpp"
