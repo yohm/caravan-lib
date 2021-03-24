@@ -85,3 +85,19 @@ On the other hand, we have the following limitations:
 
 - The library is not designed for tiny-scale tasks which typically finish in milliseconds or less. The typical duration of tasks should be in the order of seconds or longer.
 - You need more than three processes because one process is used for the master process, at least one process is used for communication, and other processes are used as workers.
+
+## Reference
+
+This project is a part of [caravan](https://github.com/crest-cassia/caravan).
+When you use this library for a research, please cite [this article](https://link.springer.com/chapter/10.1007/978-3-030-20937-7_9) as follows.
+
+```bibtex
+@inproceedings{murase2018caravan,
+  title={Caravan: a framework for comprehensive simulations on massive parallel machines},
+  author={Murase, Yohsuke and Matsushima, Hiroyasu and Noda, Itsuki and Kamada, Tomio},
+  booktitle={International Workshop on Massively Multiagent Systems},
+  pages={130--143},
+  year={2018},
+  organization={Springer}
+}
+```
