@@ -58,11 +58,18 @@ namespace caravan {
 
   using json = nlohmann::json;
 
+  // an option to control the details of the task execution
+  struct Option {
+    int log_level;         // log level. 0: silent, 1: normal, 2: verbose (default 1)
+    int num_proc_per_buf;  // number of processes for each buffer process (default 384)
+    Option() : log_level(1), num_proc_per_buf(384) {};
+  };
+
   void Start( const std::function<void(Queue&)>& on_init,
               const std::function<void(int64_t, const json&, const json&, Queue&)>& on_result_receive,
               const std::function<json(const json&)>& do_task,
               MPI_Comm comm = MPI_COMM_WORLD,
-              int num_proc_per_buf = 384, int log_level = 1) {
+              const Option& opt = Option() ) {
     int rank, procs;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &procs);
@@ -74,8 +81,8 @@ namespace caravan {
     }
     MPI_Bcast((void *) &start, sizeof(std::chrono::system_clock::time_point), MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    auto role = caravan_impl::GetRole(rank, procs, num_proc_per_buf);
-    ::caravan_impl::Logger logger(start, rank, log_level);
+    auto role = caravan_impl::GetRole(rank, procs, opt.num_proc_per_buf);
+    ::caravan_impl::Logger logger(start, rank, opt.log_level);
 
     if (std::get<0>(role) == 0) {  // Producer
       ::caravan_impl::Producer prod(logger);
@@ -85,7 +92,7 @@ namespace caravan {
       // print filling rates
       std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
       long total_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-      size_t num_consumer = caravan_impl::NumProcs(procs, num_proc_per_buf).at(2);
+      size_t num_consumer = caravan_impl::NumProcs(procs, opt.num_proc_per_buf).at(2);
       IC(prod.elapse_times);
       long sum_elapse = 0l;
       for(auto rank_elapse: prod.elapse_times) {
