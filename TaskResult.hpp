@@ -34,19 +34,7 @@ class TaskResult {
   }
 };
 
-void to_json(json &j, const TaskResult &tr) {
-  j = json{{"id", tr.task_id}, {"input",  tr.input}, {"rank", tr.rank}, {"start_at", tr.start_at}, {"finish_at", tr.finish_at},
-           {"output", tr.output}};
-}
-
-void from_json(const json &j, TaskResult &tr) {
-  j.at("id").get_to(tr.task_id);
-  tr.input = j.at("input");
-  j.at("rank").get_to(tr.rank);
-  j.at("start_at").get_to(tr.start_at);
-  j.at("finish_at").get_to(tr.finish_at);
-  tr.output = j.at("output");
-}
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TaskResult,task_id,input,rank,start_at,finish_at,output);
 
 }
 #endif //CARAVAN_LIB_TASKRESULT_HPP
