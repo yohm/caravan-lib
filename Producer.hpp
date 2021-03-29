@@ -43,9 +43,10 @@ namespace caravan_impl {
 
   class Producer {
     public:
-    Producer(Logger &_logger) : logger(_logger) {};
+    Producer(Logger &_logger, const std::string& _dump_log = "") : logger(_logger), dump_log(_dump_log) {};
     Queue tasks;
     Logger &logger;
+    std::string dump_log;
     std::map<int, long > elapse_times;  // {rank_id, elapse_time_sum }
 
     void Run(const std::vector<int> &buffers, const std::function<void(int64_t, const json&, const json&, Queue&)>& callback) {
@@ -56,6 +57,9 @@ namespace caravan_impl {
 
       MPI_Request send_req = MPI_REQUEST_NULL;
       std::vector<uint8_t> send_buf;
+
+      bool save_dump = !dump_log.empty();
+      std::map<int64_t, TaskResult> results_map;
 
       while (true) {
         logger.d("Producer has %d tasks %d running_tasks", tasks.Size(), running_task_ids.size());
@@ -91,6 +95,7 @@ namespace caravan_impl {
             TaskResult result = ReceiveResult(st);
             int64_t task_id = result.task_id;
             logger.d("Producer received result for %d", task_id);
+            if (save_dump) { results_map.emplace(task_id, result); }
             running_task_ids.erase(task_id);
             if (elapse_times.find(result.rank) == elapse_times.end() ) { elapse_times[result.rank] = 0; }
             elapse_times[result.rank] += (result.finish_at - result.start_at);
@@ -115,6 +120,14 @@ namespace caravan_impl {
 
       for (auto req_w: requesting_buffers) {
         TerminateWorker(req_w.first);
+      }
+
+      if (save_dump) {
+        std::ofstream binout(dump_log, std::ios::binary);
+        const std::vector<uint8_t> dumped = json::to_msgpack(results_map);
+        binout.write((const char *) dumped.data(), dumped.size());
+        binout.flush();
+        binout.close();
       }
     }
 

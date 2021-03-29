@@ -53,12 +53,15 @@ void test_1() {
   };
 
   std::function<json(const json& input)> do_task = [](const json& input) {
+    usleep(100'000);
     json output;
     output["result"] = input["param"].get<int>() + 1;
     return output;
   };
 
-  caravan::Start(on_init, on_result_receive, do_task, MPI_COMM_WORLD);
+  caravan::Option opt;
+  opt.dump_log = "tasks.msgpack";
+  caravan::Start(on_init, on_result_receive, do_task, MPI_COMM_WORLD, opt);
 }
 
 void test_2() {

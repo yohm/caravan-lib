@@ -62,7 +62,8 @@ namespace caravan {
   struct Option {
     int log_level;         // log level. 0: silent, 1: normal, 2: verbose (default 1)
     int num_proc_per_buf;  // number of processes for each buffer process (default 384)
-    Option() : log_level(1), num_proc_per_buf(384) {};
+    std::string dump_log;  // if not empty, save the dump to the file (default: "")
+    Option() : log_level(1), num_proc_per_buf(384), dump_log("") {};
   };
 
   void Start( const std::function<void(Queue&)>& on_init,
@@ -85,7 +86,7 @@ namespace caravan {
     ::caravan_impl::Logger logger(start, rank, opt.log_level);
 
     if (std::get<0>(role) == 0) {  // Producer
-      ::caravan_impl::Producer prod(logger);
+      ::caravan_impl::Producer prod(logger, opt.dump_log);
       on_init(prod.tasks);
       prod.Run(std::get<2>(role), on_result_receive);
 
