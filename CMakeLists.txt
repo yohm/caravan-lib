@@ -8,5 +8,9 @@ set(SOURCE_FILES caravan.hpp Logger.hpp Base.hpp TaskResult.hpp Producer.hpp Buf
 find_package(MPI)
 
 add_executable(test_caravan.out test_caravan.cpp ${SOURCE_FILES})
-target_link_libraries(test_caravan.out ${MPI_LIBRARIES})
-target_include_directories(test_caravan.out PUBLIC ${MPI_INCLUDE_PATH})
+target_link_libraries(test_caravan.out PRIVATE ${MPI_LIBRARIES})
+target_include_directories(test_caravan.out PRIVATE ${MPI_INCLUDE_PATH})
+
+add_executable(sample.out sample.cpp)
+target_link_libraries(sample.out PRIVATE ${MPI_LIBRARIES})
+target_include_directories(sample.out PRIVATE ${MPI_INCLUDE_PATH})
