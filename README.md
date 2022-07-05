@@ -59,7 +59,13 @@ git submodule update --init --recursive
 ```
 
 One of the dependent libraries is [nlohmann/json](https://github.com/nlohmann/json).
-This is used to serialize data used in tasks. Please read its documentation. You need to use it to define the inputs and outputs of tasks.
+This is used to serialize data used in tasks. Please read its documentation. You need to use it to define the inputs and outputs of tasks. Since the `json` library is a header-only library and is included in this repository as a submodule, the above command installs the json library as well.
+
+After you run add this repository as a submodule, you can use it just by adding the include paths. If you are using cmake, add the following line to your `CMakeLists.txt`.
+
+```cmake
+include_directories(${CMAKE_SOURCE_DIR}/caravan-lib ${CMAKE_SOURCE_DIR}/caravan-lib/json/include)
+```
 
 ## Usage
 
