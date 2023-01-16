@@ -7,7 +7,6 @@
 
 #include <utility>
 #include "json/single_include/nlohmann/json.hpp"
-#include "icecream/icecream.hpp"
 
 namespace caravan {
   using json = nlohmann::json;

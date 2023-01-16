@@ -94,7 +94,6 @@ namespace caravan {
       std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
       long total_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
       size_t num_consumer = caravan_impl::NumProcs(procs, opt.num_proc_per_buf).at(2);
-      IC(prod.elapse_times);
       long sum_elapse = 0l;
       for(auto rank_elapse: prod.elapse_times) {
         int rank = rank_elapse.first;

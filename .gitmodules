@@ -1,6 +1,3 @@
 [submodule "json"]
 	path = json
 	url = git@github.com:nlohmann/json.git
-[submodule "icecream"]
-	path = icecream
-	url = git@github.com:renatoGarcia/icecream-cpp.git
