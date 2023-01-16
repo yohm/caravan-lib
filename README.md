@@ -59,12 +59,26 @@ git submodule update --init --recursive
 ```
 
 One of the dependent libraries is [nlohmann/json](https://github.com/nlohmann/json).
-This is used to serialize data used in tasks. Please read its documentation. You need to use it to define the inputs and outputs of tasks. Since the `json` library is a header-only library and is included in this repository as a submodule, the above command installs the json library as well.
+This is used to serialize data used in tasks. Please read its documentation. You need to use it to define the inputs and outputs of tasks.
+To install json library on macOS, you can use [homebrew](https://brew.sh/).
 
-After you run add this repository as a submodule, you can use it just by adding the include paths. If you are using cmake, add the following line to your `CMakeLists.txt`.
+```shell
+brew install nlohmann_json
+```
+
+To use the json library in your cmake project, you can use `find_package` command. Also specify json and MPI libraries in `target_link_libraries` command.
 
 ```cmake
-include_directories(${CMAKE_SOURCE_DIR}/caravan-lib ${CMAKE_SOURCE_DIR}/caravan-lib/json/include)
+find_package(nlohmann_json)
+#  ...
+target_link_libraries(your_target MPI::MPI_CXX nlohmann_json::nlohmann_json)
+```
+
+After you add this repository as a submodule, you can use it just by adding it to the include paths.
+If you are using cmake, add the following line to your `CMakeLists.txt`.
+
+```cmake
+include_directories(${CMAKE_SOURCE_DIR}/caravan-lib)
 ```
 
 ## Usage
